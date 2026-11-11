@@ -11,7 +11,8 @@ class Category(SQLModel, table=True):
 
 
 class CategoryCreate(SQLModel):
-    name: str = Field(min_length=1)    
+    name: str = Field(min_length=1)
+
 
 class Product(SQLModel, table=True):
     id: int | None = Field(
@@ -20,9 +21,15 @@ class Product(SQLModel, table=True):
     )
 
     name: str = Field(index=True)
-    category_id:  int | None = Field(default=None, foreign_key="category.id")
+    category_id: int | None = Field(default=None, foreign_key="category.id")
+    produced: int = Field(default=0, ge=0)
+    sold: int = Field(default=0, ge=0)
+    waste: int = Field(default=0, ge=0)
 
 
 class ProductCreate(SQLModel):
     name: str = Field(min_length=1)
     category_id: int | None = None
+    produced: int = Field(default=0, ge=0)
+    sold: int = Field(default=0, ge=0)
+    waste: int = Field(default=0, ge=0)
