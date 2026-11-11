@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel
 
 from .database import engine
-from .routers import products, categories
+from .routers import categories, production, products
+
 
 
 @asynccontextmanager
@@ -23,6 +24,7 @@ app = FastAPI(
 
 # Connect product routes
 app.include_router(products.router)
+app.include_router(production.router)
 
 
 # Connect category routes
