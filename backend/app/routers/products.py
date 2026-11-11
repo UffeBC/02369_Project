@@ -33,7 +33,7 @@ def create_product(
             detail="Category does not exist"
         )
     
-    product = Product(name=data.name, category_id=data.category_id, produced=data.produced, sold=data.sold, waste=data.waste)
+    product = Product(name=data.name, category_id=data.category_id)
 
 
     session.add(product)
