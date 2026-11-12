@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel
 
 from .database import engine
-from .routers import production, products
+from .routers import categories, production, products
+
 
 
 @asynccontextmanager
@@ -25,6 +26,9 @@ app = FastAPI(
 app.include_router(products.router)
 app.include_router(production.router)
 
+
+# Connect category routes
+app.include_router(categories.router)
 
 # Simple test endpoint
 @app.get("/api/health")
