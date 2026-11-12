@@ -1,0 +1,22 @@
+/* Scoped to the dashboard so the existing page styles can stay as they are. */
+.dashboard { margin: 24px 16px; padding: 20px; border: 1px solid var(--border); text-align: left; }
+.dashboard h2 { margin-bottom: 8px; }
+.dashboard p { font-size: 13px; margin: 8px 0; }
+.dashboard-table { overflow-x: auto; margin: 20px 0; }
+.dashboard table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 14px; }
+.dashboard caption { text-align: left; padding-bottom: 8px; }
+.dashboard th, .dashboard td { padding: 10px; border-bottom: 1px solid var(--border); text-align: right; }
+.dashboard th:first-child { text-align: left; }
+.dashboard tbody th { font-weight: normal; }
+.dashboard tfoot { font-weight: bold; }
+.dashboard-graphs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.dashboard h3 { font-size: 16px; color: var(--text-h); }
+.dashboard-row { display: grid; grid-template-columns: 90px minmax(0, 1fr) 60px; gap: 8px; align-items: center; margin: 12px 0; font-size: 12px; }
+.dashboard-track { height: 12px; background: var(--border); }
+.dashboard-bar { height: 100%; background: #cf8548; }
+.dashboard-bar.sold-out { background: #659a83; }
+
+@media (max-width: 700px) {
+  .dashboard { padding: 12px; }
+  .dashboard-graphs { grid-template-columns: 1fr; gap: 8px; }
+}
