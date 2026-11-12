@@ -1,13 +1,13 @@
 # Marias Bageri project roadmap
 
-Use this checklist to track the team's 21 planned tasks across the three sprints. Keep the task numbers aligned with the status report/backlog.
+Here we use this checklist to keep track of our 21 planned tasks across the three sprints. We keep the task numbers aligned with our status report and backlog.
 
 ## How to update this roadmap
 
-- Tick a task only when its result has been reviewed and its acceptance criteria are met.
-- For code tasks, the change should be merged into `main`; a branch or open pull request alone does not count as complete.
-- Record important decisions or scope changes in the relevant task notes or project report.
-- Names below reflect the current task allocation. `TBD` means the group still needs to assign an owner.
+- We tick a task when we have reviewed the result and met its acceptance criteria.
+- For code tasks, we mark the task complete after the change has been reviewed and merged into `main`.
+- We add important decisions and scope changes to the relevant task notes or project report.
+- The names below show our current task allocation. We still need to assign owners to tasks marked `TBD`.
 
 ## Sprint 1 — Requirements and foundation
 
@@ -41,9 +41,9 @@ Use this checklist to track the team's 21 planned tasks across the three sprints
 
 ## Decisions and follow-ups
 
-- **Production MVP:** Record one total quantity per product per day. The group can revisit batch-level recording if the bakery workflow requires it.
-- **Database schema changes:** Agree on and verify a migration or database reset procedure before merging schema changes that affect existing local databases.
+- **Our production MVP:** We record one total quantity per product per day. We can revisit batch-level recording if the bakery workflow requires it.
+- **Database schema changes:** Before we merge schema changes that affect existing local databases, we agree on and verify a migration or database reset procedure.
 
 ## Progress notes
 
-Add dated notes here when the group changes scope, ownership, or completion status.
+We add dated notes here when we change scope, ownership, or completion status.
