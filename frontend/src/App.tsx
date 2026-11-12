@@ -24,6 +24,8 @@ function App() {
   const [quantities, setQuantities] = useState<Record<number, string>>({})
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const [recordsLoading, setRecordsLoading] = useState(true)
+  const [recordsError, setRecordsError] = useState(false)
 
   function loadProducts() {
     fetch('/api/products')
@@ -48,7 +50,11 @@ function App() {
         return response.json()
       })
       .then(data => setRecords(data))
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        setRecordsError(true)
+      })
+      .finally(() => setRecordsLoading(false))
   }
 
   useEffect(() => {
@@ -64,12 +70,10 @@ function App() {
     event.preventDefault()
     setMessage('')
 
-    const entries = Object.entries(quantities).filter(([productId, value]) => {
-      return value.trim() !== '' && !recordedForDate.has(Number(productId))
-    })
+    const entries = Object.entries(quantities).filter(([, value]) => value.trim() !== '')
 
     if (entries.length === 0) {
-      setMessage('Enter a quantity for at least one product.')
+      setMessage('Enter or change a quantity for at least one product.')
       return
     }
 
@@ -99,14 +103,23 @@ function App() {
         if (!response.ok) {
           throw new Error('Failed to save production record')
         }
+
+        const saved: ProductionRecord = await response.json()
+        setRecords(previous => [
+          ...previous.filter(record => record.id !== saved.id),
+          saved,
+        ])
+        setQuantities(previous => {
+          const remaining = { ...previous }
+          delete remaining[Number(productId)]
+          return remaining
+        })
       }
 
-      setQuantities({})
-      loadRecords()
       setMessage(`Saved ${entries.length} ${entries.length === 1 ? 'record' : 'records'} for ${date}.`)
     } catch (error) {
       console.error(error)
-      setMessage('Could not save the production records. Check that the backend is running.')
+      setMessage('Some records could not be saved. Check the connection and try the remaining entries again.')
     } finally {
       setSaving(false)
     }
@@ -135,6 +148,8 @@ function App() {
           <input
             type="date"
             value={date}
+            required
+            disabled={saving}
             onChange={event => {
               setDate(event.target.value)
               setQuantities({})
@@ -158,21 +173,19 @@ function App() {
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td>
-                    {recorded !== undefined ? (
-                      <span className="recorded">{recorded} recorded</span>
-                    ) : (
-                      <input
-                        type="number"
-                        min="0"
-                        step="1"
-                        inputMode="numeric"
-                        value={quantities[product.id] ?? ''}
-                        onChange={event => setQuantities({
-                          ...quantities,
-                          [product.id]: event.target.value,
-                        })}
-                      />
-                    )}
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      inputMode="numeric"
+                      aria-label={`Produced quantity for ${product.name}`}
+                      disabled={saving || recordsLoading || recordsError}
+                      value={quantities[product.id] ?? (recorded === undefined ? '' : String(recorded))}
+                      onChange={event => setQuantities({
+                        ...quantities,
+                        [product.id]: event.target.value,
+                      })}
+                    />
                   </td>
                 </tr>
               )
@@ -180,7 +193,10 @@ function App() {
           </tbody>
         </table>
 
-        <button type="submit" disabled={saving}>
+        {recordsLoading && <p>Loading production records…</p>}
+        {recordsError && <p role="alert">Could not load production records. Reload the page to try again.</p>}
+
+        <button type="submit" disabled={saving || recordsLoading || recordsError}>
           {saving ? 'Saving…' : 'Save production'}
         </button>
 
