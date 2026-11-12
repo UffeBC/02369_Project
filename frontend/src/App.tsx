@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Dashboard from './Dashboard'
 
 type Product = {
   id: number
@@ -24,6 +25,7 @@ function App() {
   return (
     <div>
       <h1>Maria's Bakery</h1>
+      <Dashboard />
 
       <h2>Products</h2>
 
