@@ -182,3 +182,62 @@
     border-right-color: var(--border);
   }
 }
+
+.production {
+  max-width: 560px;
+  margin-top: 16px;
+}
+
+.production-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--text-h);
+}
+
+.production-date input {
+  font: inherit;
+  padding: 4px 8px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.production-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.production-table th,
+.production-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.production-table th {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.production-table input {
+  width: 90px;
+  font: inherit;
+  padding: 4px 8px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.recorded {
+  color: var(--text);
+}
+
+.status {
+  margin-top: 12px;
+  color: var(--text-h);
+}
