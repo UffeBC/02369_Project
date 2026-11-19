@@ -27,8 +27,8 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Lead:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
 - [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Lead:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
 - [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha + Mahmoud
-- [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** In progress — the backend slice is implemented on a feature branch and is awaiting review and merge.
-- [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** In progress — isolated tests cover timestamps, duplicates, unknown products, and retrieval.
+- [x] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** Complete — the sell-out API is merged into `main`.
+- [x] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** Complete — the isolated API tests are merged into `main`.
 - [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Lead:** Mahmoud
 - [ ] **17. Leftover backend** — Store and retrieve leftover quantities. **Lead:** Mahmoud
 - [ ] **18. Leftover testing** — Verify leftover recording, validation, and database integration. **Lead:** Mahmoud
@@ -71,4 +71,13 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **Tasks:** 14 and 15
 - **Who did what:** Talha implemented the sell-out model, routes, tests, and documentation. The rest of the team still needs to review the design.
 - **What we started:** Added the sell-out record model and `GET`/`POST /api/sellouts` endpoints. The backend records the timestamp automatically and rejects a duplicate sell-out for the same product on the same day.
-- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passes with 3 tests after installing `backend/requirements-dev.txt`. The feature still needs review, merge, and frontend integration before the tasks are complete.
+- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passed with 3 tests after installing `backend/requirements-dev.txt`. At that stage, review and merge were still pending; the completion note below records the final state.
+
+### 2026-11-19 — Sell-out backend merged — Talha
+
+- **Status:** Completed
+- **Tasks:** 14 and 15
+- **Who did what:** Talha implemented the sell-out model, routes, duplicate handling, tests, and dependency setup. The team resolved the roadmap conflict and merged the feature into `main`.
+- **What we completed:** Employees can record a product sell-out with an automatic timestamp. The API rejects unknown products and duplicate same-day entries.
+- **Verification:** Three sell-out API tests pass, the frontend build and lint pass, and PR #11 was merged as commit `ade8bdb`.
+- **Evidence:** [PR #11](https://github.com/UffeBC/02369_Project/pull/11).
