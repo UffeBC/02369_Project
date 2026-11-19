@@ -7,7 +7,7 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - We tick a task when we have reviewed the result and met its acceptance criteria.
 - For code tasks, we mark the task complete after the change has been reviewed and merged into `main`.
 - We add important decisions and scope changes to the relevant task notes or project report.
-- The names below show our current task allocation. We still need to assign owners to tasks marked `TBD`.
+- The names below show our current task leads. We still need to assign leads to tasks marked `TBD`.
 
 ## Sprint 1 — Requirements and foundation
 
