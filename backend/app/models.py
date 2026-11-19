@@ -1,5 +1,5 @@
 #defines structure of DB tables
-from datetime import date
+from datetime import date, datetime, timezone
 
 from sqlmodel import SQLModel, Field
 
@@ -42,3 +42,13 @@ class ProductionRecordCreate(SQLModel):
     product_id: int
     date: date
     quantity: int = Field(ge=0)
+
+
+class SellOutRecord(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    product_id: int = Field(foreign_key="product.id")
+    sold_out_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class SellOutRecordCreate(SQLModel):
+    product_id: int

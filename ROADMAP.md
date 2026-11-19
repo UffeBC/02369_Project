@@ -27,8 +27,8 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Lead:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
 - [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Lead:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
 - [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha + Mahmoud
-- [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha
-- [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha
+- [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** In progress — the backend slice is implemented on a feature branch and is awaiting review and merge.
+- [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** In progress — isolated tests cover timestamps, duplicates, unknown products, and retrieval.
 - [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Lead:** Mahmoud
 - [ ] **17. Leftover backend** — Store and retrieve leftover quantities. **Lead:** Mahmoud
 - [ ] **18. Leftover testing** — Verify leftover recording, validation, and database integration. **Lead:** Mahmoud
@@ -64,3 +64,11 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **Who did what:** Mahmoud implemented the leftover-recording branch. Talha checked it against the latest `main` and documented the merge conflict.
 - **What we found:** Mahmoud's leftover-recording branch contains the leftover interface, backend routes, and tests, but it conflicts with the latest `frontend/src/App.tsx` after PR #9 was merged.
 - **Next action:** Resolve the conflict against the current `main` before opening or merging the leftover-recording pull request.
+
+### 2026-11-19 — Sell-out backend started — Talha
+
+- **Status:** In progress
+- **Tasks:** 14 and 15
+- **Who did what:** Talha implemented the sell-out model, routes, tests, and documentation. The rest of the team still needs to review the design.
+- **What we started:** Added the sell-out record model and `GET`/`POST /api/sellouts` endpoints. The backend records the timestamp automatically and rejects a duplicate sell-out for the same product on the same day.
+- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passes with 3 tests after installing `backend/requirements-dev.txt`. The feature still needs review, merge, and frontend integration before the tasks are complete.
