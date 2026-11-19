@@ -27,7 +27,7 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Lead:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
 - [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Lead:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
 - [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha + Mahmoud
-- [x] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:**  Talha. **Status:** Complete — the sell-out API is merged into `main`.
+- [x] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** Complete — the sell-out API is merged into `main`.
 - [x] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** Complete — the isolated API tests are merged into `main`.
 - [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Lead:** Mahmoud
 - [ ] **17. Leftover backend** — Store and retrieve leftover quantities. **Lead:** Mahmoud
