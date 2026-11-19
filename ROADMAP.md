@@ -27,8 +27,8 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - [ ] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Owner:** Talha
 - [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Owner:** Talha + Azad
 - [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Owner:** Talha + Mahmoud
-- [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Owner:** Azad + Talha
-- [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Owner:** Azad + Talha
+- [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Owner:** Azad + Talha. **Status:** In progress — the backend slice is implemented on a feature branch and is awaiting review and merge.
+- [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Owner:** Azad + Talha. **Status:** In progress — isolated tests cover timestamps, duplicates, unknown products, and retrieval.
 - [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Owner:** Mahmoud
 - [ ] **17. Leftover backend** — Store and retrieve leftover quantities. **Owner:** Mahmoud
 - [ ] **18. Leftover testing** — Verify leftover recording, validation, and database integration. **Owner:** Mahmoud
@@ -47,3 +47,10 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 ## Progress notes
 
 We add dated notes here when we change scope, ownership, or completion status.
+
+### 2026-11-19 — Sell-out backend started
+
+- **Status:** In progress
+- **Tasks:** 14 and 15
+- **What we started:** Added the sell-out record model and `GET`/`POST /api/sellouts` endpoints. The backend records the timestamp automatically and rejects a duplicate sell-out for the same product on the same day.
+- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passes with 3 tests. The feature still needs review, merge, and frontend integration before the tasks are complete.
