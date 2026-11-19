@@ -1,3 +1,4 @@
+
 # starts backend application
 from contextlib import asynccontextmanager
 
@@ -5,7 +6,7 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel
 
 from .database import engine
-from .routers import products, leftovers
+from .routers import categories, leftovers, production, products
 
 
 @asynccontextmanager
@@ -23,8 +24,11 @@ app = FastAPI(
 
 # Connect product routes
 app.include_router(products.router)
+app.include_router(production.router)
 app.include_router(leftovers.router)
 
+# Connect category routes
+app.include_router(categories.router)
 
 # Simple test endpoint
 @app.get("/api/health")

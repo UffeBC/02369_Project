@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import Product, ProductCreate
+from ..models import Product, ProductCreate, Category
 
 
 router = APIRouter(
@@ -26,7 +26,15 @@ def create_product(
     data: ProductCreate,
     session: Session = Depends(get_session)
 ):
-    product = Product(name=data.name)
+    # Check that the category exists (if one was given)
+    if data.category_id is not None and session.get(Category, data.category_id) is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Category does not exist"
+        )
+    
+    product = Product(name=data.name, category_id=data.category_id)
+
 
     session.add(product)
     session.commit()
