@@ -53,4 +53,4 @@ We add dated notes here when we change scope, ownership, or completion status.
 - **Status:** In progress
 - **Tasks:** 14 and 15
 - **What we started:** Added the sell-out record model and `GET`/`POST /api/sellouts` endpoints. The backend records the timestamp automatically and rejects a duplicate sell-out for the same product on the same day.
-- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passes with 3 tests. The feature still needs review, merge, and frontend integration before the tasks are complete.
+- **Verification:** `PYTHONPATH=. .venv/bin/pytest -q tests/test_sellouts.py` passes with 3 tests after installing `backend/requirements-dev.txt`. The feature still needs review, merge, and frontend integration before the tasks are complete.
