@@ -11,33 +11,33 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 
 ## Sprint 1 — Requirements and foundation
 
-- [ ] **1. Stakeholder requirements** — Interview Marias Bageri and document its current workflow and needs. **Lead:** All
-- [ ] **2. User stories and acceptance criteria** — Agree on the user stories and define observable completion criteria for each feature. **Lead:** All
-- [ ] **3. Scrum planning** — Create the product backlog, prioritize it, and organize the work into sprints. **Lead:** TBD
-- [ ] **4. Software architecture** — Document how the React frontend, FastAPI backend, and SQLite database fit together. **Lead:** Uffe
-- [x] **5. GitHub setup** — Set up the shared repository and its frontend, backend, and database structure. **Lead:** Uffe
-- [ ] **6. Integration and deployment setup** — Document and verify how the components run together, how integration is checked, and how the application is deployed or started. **Lead:** All
-- [ ] **7. Database design** — Agree on the data model needed for products, production, sell-outs, and leftovers. **Lead:** Morten + Talha
-- [ ] **8. Database implementation** — Implement and verify persistence for the agreed data model, including a safe approach when the schema changes. **Lead:** Morten
-- [ ] **9. Product catalogue** — Add, edit, remove, and retrieve products with appropriate validation. **Lead:** Morten
+- [ ] **1. Stakeholder requirements** (All) — Interview Marias Bageri and document its current workflow and needs.
+- [ ] **2. User stories and acceptance criteria** (All) — Agree on the user stories and define observable completion criteria for each feature.
+- [ ] **3. Scrum planning** (TBD) — Create the product backlog, prioritize it, and organize the work into sprints.
+- [ ] **4. Software architecture** (Uffe) — Document how the React frontend, FastAPI backend, and SQLite database fit together.
+- [x] **5. GitHub setup** (Uffe) — Set up the shared repository and its frontend, backend, and database structure.
+- [ ] **6. Integration and deployment setup** (All) — Document and verify how the components run together, how integration is checked, and how the application is deployed or started.
+- [ ] **7. Database design** (Morten + Talha) — Agree on the data model needed for products, production, sell-outs, and leftovers.
+- [ ] **8. Database implementation** (Morten) — Implement and verify persistence for the agreed data model, including a safe approach when the schema changes.
+- [ ] **9. Product catalogue** (Morten) — Add, edit, remove, and retrieve products with appropriate validation.
 
 ## Sprint 2 — Daily bakery records
 
-- [x] **10. Production input interface** — Let employees record the quantity produced for each product on a given day. **Lead:** Talha + Azad. **Status:** Complete — the form is merged into `main`, including editing an existing daily quantity.
-- [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Lead:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
-- [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Lead:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
-- [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha. **Status:** In progress — the interface is implemented on a feature branch and is awaiting review and merge.
-- [x] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** Complete — the sell-out API is merged into `main`.
-- [x] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** Complete — the isolated API tests are merged into `main`.
-- [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Lead:** Mahmoud
-- [ ] **17. Leftover backend** — Store and retrieve leftover quantities. **Lead:** Mahmoud
-- [ ] **18. Leftover testing** — Verify leftover recording, validation, and database integration. **Lead:** Mahmoud
+- [x] **10. Production input interface** (Talha + Azad) — Let employees record the quantity produced for each product on a given day. **Status:** Complete — the form is merged into `main`, including editing an existing daily quantity.
+- [x] **11. Production backend** (Talha) — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
+- [ ] **12. Production testing** (Talha + Azad) — Verify production recording, input validation, and error handling. **Status:** In progress — automated API tests are still pending in a feature branch.
+- [x] **13. Sell-out interface** (Talha) — Let employees mark a product as sold out. **Status:** Complete — the interface is merged into `main`.
+- [x] **14. Sell-out backend** (Azad + Talha) — Store sell-out events with an automatically recorded timestamp. **Status:** Complete — the sell-out API is merged into `main`.
+- [x] **15. Sell-out testing** (Azad + Talha) — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Status:** Complete — the isolated API tests are merged into `main`.
+- [ ] **16. Leftover input interface** (Mahmoud) — Provide a closing-time form for recording remaining product quantities.
+- [ ] **17. Leftover backend** (Mahmoud) — Store and retrieve leftover quantities.
+- [ ] **18. Leftover testing** (Mahmoud) — Verify leftover recording, validation, and database integration.
 
 ## Sprint 3 — Insights and validation
 
-- [ ] **19. Statistics backend** — Calculate product statistics comparing production, sell-outs, and leftovers by product and weekday. **Lead:** TBD
-- [ ] **20. Dashboard frontend** — Show waste and sell-out patterns using clear graphs and tables. **Lead:** Islam
-- [ ] **21. Dashboard testing and validation** — Check calculations against sample data and validate the dashboard with the bakery. **Lead:** Islam
+- [ ] **19. Statistics backend** (TBD) — Calculate product statistics comparing production, sell-outs, and leftovers by product and weekday.
+- [ ] **20. Dashboard frontend** (Islam) — Show waste and sell-out patterns using clear graphs and tables.
+- [ ] **21. Dashboard testing and validation** (Islam) — Check calculations against sample data and validate the dashboard with the bakery.
 
 ## Decisions and follow-ups
 
@@ -89,3 +89,12 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **Who did what:** Talha implemented the React sell-out list, loading state, duplicate-safe button behavior, and user feedback.
 - **What we started:** Employees can load today's sell-out records and mark an available product as sold out. The interface shows completed sell-outs and disables marking for past or future dates.
 - **Verification:** The frontend TypeScript build and lint pass. Review and merge are still pending.
+
+### 2026-11-19 — Sell-out interface completed — Talha
+
+- **Status:** Completed
+- **Tasks:** 13
+- **Who did what:** Talha implemented and pushed the React sell-out interface, then incorporated it into `main` through the reviewed pull request.
+- **What we completed:** Employees can load saved sell-out records, mark an available product as sold out for today, and receive loading, success, duplicate, and error feedback. Past and future dates cannot be used for new sell-out entries.
+- **Verification:** The frontend TypeScript build and lint pass, and PR #13 was merged as commit `a31c428`.
+- **Evidence:** [PR #13](https://github.com/UffeBC/02369_Project/pull/13).
