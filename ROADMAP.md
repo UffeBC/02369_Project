@@ -25,7 +25,7 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 
 - [x] **10. Production input interface** (Talha + Azad) — Let employees record the quantity produced for each product on a given day. **Status:** Complete — the form is merged into `main`, including editing an existing daily quantity.
 - [x] **11. Production backend** (Talha) — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
-- [ ] **12. Production testing** (Talha + Azad) — Verify production recording, input validation, and error handling. **Status:** In progress — automated API tests are still pending in a feature branch.
+- [ ] **12. Production testing** (Talha + Azad) — Verify production recording, input validation, and error handling. **Status:** In review — the production API tests are in [PR #15](https://github.com/UffeBC/02369_Project/pull/15).
 - [x] **13. Sell-out interface** (Talha) — Let employees mark a product as sold out. **Status:** Complete — the interface is merged into `main`.
 - [x] **14. Sell-out backend** (Azad + Talha) — Store sell-out events with an automatically recorded timestamp. **Status:** Complete — the sell-out API is merged into `main`.
 - [x] **15. Sell-out testing** (Azad + Talha) — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Status:** Complete — the isolated API tests are merged into `main`.
@@ -98,3 +98,12 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **What we completed:** Employees can load saved sell-out records, mark an available product as sold out for today, and receive loading, success, duplicate, and error feedback. Past and future dates cannot be used for new sell-out entries.
 - **Verification:** The frontend TypeScript build and lint pass, and PR #13 was merged as commit `a31c428`.
 - **Evidence:** [PR #13](https://github.com/UffeBC/02369_Project/pull/13).
+
+### 2026-11-19 — Production tests in review — Azad
+
+- **Status:** In review
+- **Tasks:** 12
+- **Who did what:** Azad wrote the shared backend test fixtures and the production API tests.
+- **What we did:** Added an isolated in-memory test setup and 10 production tests covering create, update/upsert, validation, unknown product, zero quantity, separate products and dates, and the list endpoint.
+- **Verification:** `cd backend && .venv/bin/pytest -q` passes with 13 tests (10 new production tests and the 3 existing sell-out tests). `git merge-tree origin/main HEAD` is clean.
+- **Evidence:** [PR #15](https://github.com/UffeBC/02369_Project/pull/15).
