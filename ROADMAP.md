@@ -23,9 +23,9 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 
 ## Sprint 2 — Daily bakery records
 
-- [ ] **10. Production input interface** — Let employees record the quantity produced for each product on a given day. **Owner:** Talha + Azad
-- [ ] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Owner:** Talha
-- [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Owner:** Talha + Azad
+- [x] **10. Production input interface** — Let employees record the quantity produced for each product on a given day. **Owner:** Talha + Azad. **Status:** Complete — the form is merged into `main`, including editing an existing daily quantity.
+- [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Owner:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
+- [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Owner:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
 - [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Owner:** Talha + Mahmoud
 - [ ] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Owner:** Azad + Talha
 - [ ] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Owner:** Azad + Talha
@@ -47,3 +47,17 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 ## Progress notes
 
 We add dated notes here when we change scope, ownership, or completion status.
+
+### 2026-11-19 — Daily production editing merged
+
+- **Status:** Completed
+- **Tasks:** 10 and 11
+- **What we completed:** PR #9 was reviewed and merged into `main`. Employees can now edit an already recorded production quantity for a product and date. The backend keeps the MVP rule of one total per product per day by updating the existing record.
+- **Verification:** The frontend build and lint pass. The backend starts correctly, and `GET /api/products` and `GET /api/production` both return HTTP 200.
+- **Evidence:** [PR #9](https://github.com/UffeBC/02369_Project/pull/9), merged commit `a5c0084`.
+
+### 2026-11-19 — Leftover-recording integration follow-up
+
+- **Status:** Pending
+- **What we found:** Mahmoud's leftover-recording branch contains the leftover interface, backend routes, and tests, but it conflicts with the latest `frontend/src/App.tsx` after PR #9 was merged.
+- **Next action:** Resolve the conflict against the current `main` before opening or merging the leftover-recording pull request.
