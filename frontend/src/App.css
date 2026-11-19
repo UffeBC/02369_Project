@@ -241,3 +241,49 @@
   margin-top: 12px;
   color: var(--text-h);
 }
+
+.sell-outs {
+  max-width: 560px;
+  margin: 28px 0 32px;
+  text-align: left;
+}
+
+.sell-outs > p {
+  margin-bottom: 12px;
+}
+
+.sell-out-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.sell-out-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sell-out-row button {
+  font: inherit;
+  padding: 5px 10px;
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.sell-out-row button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.sell-out-status {
+  color: var(--text-h);
+  font-weight: 600;
+}

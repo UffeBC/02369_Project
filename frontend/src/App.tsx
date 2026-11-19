@@ -13,19 +13,34 @@ type ProductionRecord = {
   quantity: number
 }
 
+type SellOutRecord = {
+  id: number
+  product_id: number
+  sold_out_at: string
+}
+
 function today(): string {
   return new Date().toLocaleDateString('en-CA')
+}
+
+function localDate(timestamp: string): string {
+  return new Date(timestamp).toLocaleDateString('en-CA')
 }
 
 function App() {
   const [products, setProducts] = useState<Product[]>([])
   const [records, setRecords] = useState<ProductionRecord[]>([])
+  const [sellOuts, setSellOuts] = useState<SellOutRecord[]>([])
   const [date, setDate] = useState(today())
   const [quantities, setQuantities] = useState<Record<number, string>>({})
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [recordsLoading, setRecordsLoading] = useState(true)
   const [recordsError, setRecordsError] = useState(false)
+  const [sellOutsLoading, setSellOutsLoading] = useState(true)
+  const [sellOutsError, setSellOutsError] = useState(false)
+  const [markingProductId, setMarkingProductId] = useState<number | null>(null)
+  const [sellOutMessage, setSellOutMessage] = useState('')
 
   function loadProducts() {
     fetch('/api/products')
@@ -57,14 +72,38 @@ function App() {
       .finally(() => setRecordsLoading(false))
   }
 
+  function loadSellOuts() {
+    fetch('/api/sellouts')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch sell-outs')
+        }
+
+        return response.json()
+      })
+      .then(data => setSellOuts(data))
+      .catch(error => {
+        console.error(error)
+        setSellOutsError(true)
+      })
+      .finally(() => setSellOutsLoading(false))
+  }
+
   useEffect(() => {
     loadProducts()
     loadRecords()
+    loadSellOuts()
   }, [])
 
   const recordedForDate = new Map(
     records.filter(record => record.date === date).map(record => [record.product_id, record.quantity]),
   )
+  const soldOutForDate = new Set(
+    sellOuts
+      .filter(record => localDate(record.sold_out_at) === date)
+      .map(record => record.product_id),
+  )
+  const selectedDateIsToday = date === today()
 
   async function save(event: React.FormEvent) {
     event.preventDefault()
@@ -125,6 +164,37 @@ function App() {
     }
   }
 
+  async function markSoldOut(product: Product) {
+    setMarkingProductId(product.id)
+    setSellOutMessage('')
+
+    try {
+      const response = await fetch('/api/sellouts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: product.id }),
+      })
+
+      if (response.status === 409) {
+        setSellOutMessage(`${product.name} is already marked as sold out today.`)
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to save sell-out')
+      }
+
+      const saved: SellOutRecord = await response.json()
+      setSellOuts(previous => [...previous, saved])
+      setSellOutMessage(`${product.name} marked as sold out.`)
+    } catch (error) {
+      console.error(error)
+      setSellOutMessage('Could not save the sell-out. Check that the backend is running.')
+    } finally {
+      setMarkingProductId(null)
+    }
+  }
+
   return (
     <div>
       <h1>Maria's Bakery</h1>
@@ -139,6 +209,47 @@ function App() {
           </li>
         ))}
       </ul>
+
+      <section className="sell-outs" aria-labelledby="sell-outs-heading">
+        <h2 id="sell-outs-heading">Sell-outs</h2>
+        <p>Mark a product when it sells out today. The time is recorded automatically.</p>
+
+        {!selectedDateIsToday && (
+          <p className="status">Sell-outs can only be recorded for today.</p>
+        )}
+        {sellOutsLoading && <p>Loading sell-outs…</p>}
+        {sellOutsError && (
+          <p className="status" role="alert">
+            Could not load sell-outs. Reload the page to try again.
+          </p>
+        )}
+
+        <ul className="sell-out-list">
+          {products.map(product => {
+            const soldOut = soldOutForDate.has(product.id)
+            const marking = markingProductId === product.id
+
+            return (
+              <li className="sell-out-row" key={product.id}>
+                <span>{product.name}</span>
+                {soldOut ? (
+                  <span className="sell-out-status">Sold out</span>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={!selectedDateIsToday || sellOutsLoading || sellOutsError || markingProductId !== null}
+                    onClick={() => markSoldOut(product)}
+                  >
+                    {marking ? 'Saving…' : 'Mark sold out'}
+                  </button>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+
+        {sellOutMessage && <p className="status" role="status">{sellOutMessage}</p>}
+      </section>
 
       <h2>Daily production</h2>
 

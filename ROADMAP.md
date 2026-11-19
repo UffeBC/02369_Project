@@ -26,7 +26,7 @@ Here we use this checklist to keep track of our 21 planned tasks across the thre
 - [x] **10. Production input interface** — Let employees record the quantity produced for each product on a given day. **Lead:** Talha + Azad. **Status:** Complete — the form is merged into `main`, including editing an existing daily quantity.
 - [x] **11. Production backend** — Save and retrieve production records through the API; support the agreed MVP rule of one daily total per product. **Lead:** Talha. **Status:** Complete — the production API and daily upsert behavior are merged into `main`.
 - [ ] **12. Production testing** — Verify production recording, input validation, and error handling. **Lead:** Talha + Azad. **Status:** In progress — automated API tests are still pending in a feature branch.
-- [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha + Mahmoud
+- [ ] **13. Sell-out interface** — Let employees mark a product as sold out. **Lead:** Talha. **Status:** In progress — the interface is implemented on a feature branch and is awaiting review and merge.
 - [x] **14. Sell-out backend** — Store sell-out events with an automatically recorded timestamp. **Lead:** Azad + Talha. **Status:** Complete — the sell-out API is merged into `main`.
 - [x] **15. Sell-out testing** — Verify sell-out recording, timestamps, and handling of incorrect or duplicate entries. **Lead:** Azad + Talha. **Status:** Complete — the isolated API tests are merged into `main`.
 - [ ] **16. Leftover input interface** — Provide a closing-time form for recording remaining product quantities. **Lead:** Mahmoud
@@ -81,3 +81,11 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **What we completed:** Employees can record a product sell-out with an automatic timestamp. The API rejects unknown products and duplicate same-day entries.
 - **Verification:** Three sell-out API tests pass, the frontend build and lint pass, and PR #11 was merged as commit `ade8bdb`.
 - **Evidence:** [PR #11](https://github.com/UffeBC/02369_Project/pull/11).
+
+### 2026-11-19 — Sell-out interface started — Talha
+
+- **Status:** In progress
+- **Tasks:** 13
+- **Who did what:** Talha implemented the React sell-out list, loading state, duplicate-safe button behavior, and user feedback.
+- **What we started:** Employees can load today's sell-out records and mark an available product as sold out. The interface shows completed sell-outs and disables marking for past or future dates.
+- **Verification:** The frontend TypeScript build and lint pass. Review and merge are still pending.
