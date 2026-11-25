@@ -185,7 +185,12 @@ button.use-bake-suggestion { min-height: 28px; padding: 2px 7px; }
 .plan-product { width: 100%; border-color: transparent; background: transparent; }
 .plan-product[aria-pressed='true'] { background: #efe6d7; }
 .plan-note { padding: 12px 18px; }
-.bake-plan-toolbar, .log-toolbar:has(> button) { align-items: end; }
+.bake-plan-views {
+  display: inline-flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; padding: 4px;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+}
+.bake-plan-views button { border-color: transparent; }
+.bake-plan-views button[aria-pressed="true"] { background: var(--green); color: white; }
 .quick-bake-card { margin-top: 16px; padding: 16px 18px; }
 .quick-bake-list {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));

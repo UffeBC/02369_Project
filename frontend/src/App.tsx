@@ -75,8 +75,8 @@ function App() {
               if (view !== 'planning') setQuickBakeList(false)
               setView('planning')
             }}>Bake plan</button>
-            <button aria-current={view === 'charts' ? 'page' : undefined} onClick={() => setView('charts')}>Charts</button>
             <button aria-current={view === 'daily' ? 'page' : undefined} onClick={() => setView('daily')}>Daily log</button>
+            <button aria-current={view === 'charts' ? 'page' : undefined} onClick={() => setView('charts')}>Charts</button>
             <button aria-current={view === 'products' ? 'page' : undefined} onClick={() => setView('products')}>Products</button>
           </nav>
           {!publicDemo && <details className="settings">
@@ -523,7 +523,6 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
             <label>Find a product
               <input type="search" placeholder="Search by name" value={query} onChange={event => setQuery(event.target.value)} />
             </label>
-            <button type="button" onClick={onOpenBakeList}>Open quick bake list</button>
           </div>
           {demo && <p className="log-note">Demo data is read-only.</p>}
           {!demo && <p className="log-note">Enter total units sold at closing. Leave unknown counts blank and enter 0 for confirmed zero sales.</p>}

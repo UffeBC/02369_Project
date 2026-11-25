@@ -80,14 +80,15 @@ export default function Planning({ products, production, sales, sellOuts, loadin
 
   return (
     <>
-      <div className="daily-card log-toolbar bake-plan-toolbar">
+      <div className="bake-plan-views" role="group" aria-label="Bake plan view">
+        <button type="button" aria-pressed={!quickList} onClick={() => onQuickListChange(false)}>Forecast details</button>
+        <button type="button" aria-pressed={quickList} onClick={() => onQuickListChange(true)}>Quick bake list</button>
+      </div>
+      <div className="daily-card log-toolbar">
         <label>Plan for <input type="date" value={date} onChange={event => setPlanDate(event.target.value)} /></label>
         <label>Find a product
           <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search by name" />
         </label>
-        <button type="button" onClick={() => onQuickListChange(!quickList)}>
-          {quickList ? 'View forecast details' : 'Quick bake list'}
-        </button>
       </div>
       {quickList ? (
         <section className="daily-card quick-bake-card" aria-labelledby="quick-bake-heading">
