@@ -1,0 +1,386 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Rugbrød"
+    },
+    {
+      "id": 2,
+      "name": "Sandwich"
+    },
+    {
+      "id": 3,
+      "name": "Franskbrød"
+    },
+    {
+      "id": 4,
+      "name": "Specialbrød"
+    },
+    {
+      "id": 5,
+      "name": "Surdejsbrød"
+    },
+    {
+      "id": 6,
+      "name": "Rundstykker"
+    },
+    {
+      "id": 7,
+      "name": "Surdejsboller"
+    },
+    {
+      "id": 8,
+      "name": "Boller & Flutes"
+    },
+    {
+      "id": 9,
+      "name": "Wienerbrød"
+    },
+    {
+      "id": 10,
+      "name": "Stort wienerbrød"
+    },
+    {
+      "id": 11,
+      "name": "Kagemænd"
+    }
+  ],
+  "products": [
+    {
+      "name": "Græskarkerne Rugbrød",
+      "category_id": 1
+    },
+    {
+      "name": "Kernefri rugbrød",
+      "category_id": 1
+    },
+    {
+      "name": "Kernefyldt rugbrød",
+      "category_id": 1
+    },
+    {
+      "name": "Softkerne rugbrød",
+      "category_id": 1
+    },
+    {
+      "name": "Croissant m. Hønsesalat",
+      "category_id": 2
+    },
+    {
+      "name": "Ostemad m. peber 1 stk.",
+      "category_id": 2
+    },
+    {
+      "name": "Ostemadder m. peber 2 stk",
+      "category_id": 2
+    },
+    {
+      "name": "Sadwich m. Kylling & Karry (Grov Bolle)",
+      "category_id": 2
+    },
+    {
+      "name": "Sadwich m. Kylling & Karry (Lys Bolle)",
+      "category_id": 2
+    },
+    {
+      "name": "Sandwich m. Tunsalat (Grov Bolle)",
+      "category_id": 2
+    },
+    {
+      "name": "Sandwich m. Tunsalat (Lys Bolle)",
+      "category_id": 2
+    },
+    {
+      "name": "Formbrød m. birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Formbrød uden birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Franskbrød m. birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Franskbrød uden birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Lille formbrød m. birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Lille formbrød uden birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Lille franskbrød m. birkes",
+      "category_id": 3
+    },
+    {
+      "name": "Lille franskbrød uden birkes",
+      "category_id": 3
+    },
+    {
+      "name": "3 kornsbrød",
+      "category_id": 4
+    },
+    {
+      "name": "4 kornsbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Ciabattabrød grov",
+      "category_id": 4
+    },
+    {
+      "name": "Ciabattabrød lys",
+      "category_id": 4
+    },
+    {
+      "name": "Frokostbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Fuldkorns Gourmetbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Grov Fermentbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Madbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Proteinbrød m. Belugalinser",
+      "category_id": 4
+    },
+    {
+      "name": "Skagenbrød",
+      "category_id": 4
+    },
+    {
+      "name": "Verona Brød",
+      "category_id": 4
+    },
+    {
+      "name": "Surdejs kernebrød",
+      "category_id": 5
+    },
+    {
+      "name": "Surdejs Muslibrød m. rosiner",
+      "category_id": 5
+    },
+    {
+      "name": "Surdejsbrød Fuldkornshvede (uden kerner)",
+      "category_id": 5
+    },
+    {
+      "name": "Surdejsbrød m. Solsikke",
+      "category_id": 5
+    },
+    {
+      "name": "Surdejsbrød med græskarkerner",
+      "category_id": 5
+    },
+    {
+      "name": "Surdejsbrød Rugsigte (uden kerner)",
+      "category_id": 5
+    },
+    {
+      "name": "3-kornsbolle",
+      "category_id": 6
+    },
+    {
+      "name": "4-kornsbolle",
+      "category_id": 6
+    },
+    {
+      "name": "Håndværker",
+      "category_id": 6
+    },
+    {
+      "name": "Havrebolle",
+      "category_id": 6
+    },
+    {
+      "name": "Rundstykke m. birkes",
+      "category_id": 6
+    },
+    {
+      "name": "Skagenslap",
+      "category_id": 6
+    },
+    {
+      "name": "Spansk rundstykke m. mel",
+      "category_id": 6
+    },
+    {
+      "name": "Spansk rundstykke m. sesam",
+      "category_id": 6
+    },
+    {
+      "name": "Valnøddebolle",
+      "category_id": 6
+    },
+    {
+      "name": "Fuldkornshvede bolle",
+      "category_id": 7
+    },
+    {
+      "name": "Græskarbolle",
+      "category_id": 7
+    },
+    {
+      "name": "Kernebolle",
+      "category_id": 7
+    },
+    {
+      "name": "Müslibolle",
+      "category_id": 7
+    },
+    {
+      "name": "Rugsigtebolle",
+      "category_id": 7
+    },
+    {
+      "name": "Solsikkebolle",
+      "category_id": 7
+    },
+    {
+      "name": "Lys Ciabatta bolle",
+      "category_id": 8
+    },
+    {
+      "name": "Mørk Ciabattabolle",
+      "category_id": 8
+    },
+    {
+      "name": "Sandwichbolle Grov",
+      "category_id": 8
+    },
+    {
+      "name": "Sandwichbolle Lys",
+      "category_id": 8
+    },
+    {
+      "name": "Tebolle alm.",
+      "category_id": 8
+    },
+    {
+      "name": "Tebolle m. Chokolade",
+      "category_id": 8
+    },
+    {
+      "name": "Tebolle m. Rosiner",
+      "category_id": 8
+    },
+    {
+      "name": "Chokoladebolle",
+      "category_id": 9
+    },
+    {
+      "name": "Croissant m. Chokolade",
+      "category_id": 9
+    },
+    {
+      "name": "Croissant m. smør",
+      "category_id": 9
+    },
+    {
+      "name": "Høj snegl",
+      "category_id": 9
+    },
+    {
+      "name": "Kanel snegl",
+      "category_id": 9
+    },
+    {
+      "name": "Overskåren m. creme",
+      "category_id": 9
+    },
+    {
+      "name": "Overskåren m. Hindbærsyltetøj",
+      "category_id": 9
+    },
+    {
+      "name": "Rom snegl",
+      "category_id": 9
+    },
+    {
+      "name": "Spandauer m. creme",
+      "category_id": 9
+    },
+    {
+      "name": "Spandauer m. hindbær",
+      "category_id": 9
+    },
+    {
+      "name": "Tryksnegl",
+      "category_id": 9
+    },
+    {
+      "name": "Frøsnapper",
+      "category_id": 9
+    },
+    {
+      "name": "Grovbirkes",
+      "category_id": 9
+    },
+    {
+      "name": "Smørbirkes",
+      "category_id": 9
+    },
+    {
+      "name": "Tebirkes alm.",
+      "category_id": 9
+    },
+    {
+      "name": "Wienerbrøds krans",
+      "category_id": 10
+    },
+    {
+      "name": "Chokolade trekant",
+      "category_id": 10
+    },
+    {
+      "name": "Kanelstang",
+      "category_id": 10
+    },
+    {
+      "name": "Wienerbrøds kringle",
+      "category_id": 10
+    },
+    {
+      "name": "Wienerstang m. Cremé",
+      "category_id": 10
+    },
+    {
+      "name": "Wienerstang m. sukker",
+      "category_id": 10
+    },
+    {
+      "name": "Wienerstang stang m. glasur",
+      "category_id": 10
+    },
+    {
+      "name": "Kagemand / kone af teboller",
+      "category_id": 11
+    },
+    {
+      "name": "Kagemand / Kone af Vandbakkelse",
+      "category_id": 11
+    },
+    {
+      "name": "Kagemand / kone af weienerbrød",
+      "category_id": 11
+    },
+    {
+      "name": "Kagemand / Kone af Kanelstang",
+      "category_id": 11
+    }
+  ]
+}
