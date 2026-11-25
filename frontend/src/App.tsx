@@ -39,23 +39,38 @@ function localDate(timestamp: string): string {
 
 function App() {
   const [demo, setDemo] = useState(false)
+  const [view, setView] = useState<'overview' | 'daily'>('overview')
 
   return (
-    <div>
-      <h1>Maria's Bakery</h1>
-      <details className="settings">
-        <summary>Settings</summary>
-        <button type="button" aria-pressed={demo} onClick={() => setDemo(!demo)}>
-          Demo
-        </button>
-      </details>
-      <p role="status">{demo ? 'Demo mode · simulated data' : 'Collected data'}</p>
-      <BakeryData key={String(demo)} demo={demo} />
+    <div className="app">
+      <header className="topbar">
+        <div className="topbar-inner">
+          <span className="brand"><span aria-hidden="true">M</span> Maria’s Bakery</span>
+          <nav aria-label="Bakery workspace">
+            <button aria-current={view === 'overview' ? 'page' : undefined} onClick={() => setView('overview')}>Overview</button>
+            <button aria-current={view === 'daily' ? 'page' : undefined} onClick={() => setView('daily')}>Daily log</button>
+          </nav>
+          <details className="settings">
+            <summary>Settings</summary>
+            <div className="settings-panel">
+              <button type="button" role="switch" aria-checked={demo} onClick={() => setDemo(!demo)}>Demo</button>
+              <p>{demo ? 'Showing simulated data.' : 'Showing collected data.'}</p>
+            </div>
+          </details>
+        </div>
+      </header>
+      <main>
+        <BakeryData key={String(demo)} demo={demo} view={view} onOpenLog={() => setView('daily')} />
+      </main>
     </div>
   )
 }
 
-function BakeryData({ demo }: { demo: boolean }) {
+function BakeryData({ demo, view, onOpenLog }: {
+  demo: boolean
+  view: 'overview' | 'daily'
+  onOpenLog: () => void
+}) {
   const [products, setProducts] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(true)
   const [productsError, setProductsError] = useState(false)
@@ -72,6 +87,7 @@ function BakeryData({ demo }: { demo: boolean }) {
   const [sellOutsError, setSellOutsError] = useState(false)
   const [markingProductId, setMarkingProductId] = useState<number | null>(null)
   const [sellOutMessage, setSellOutMessage] = useState('')
+  const [query, setQuery] = useState('')
 
   function loadProducts() {
     fetch('/api/products')
@@ -177,6 +193,9 @@ function BakeryData({ demo }: { demo: boolean }) {
       .map(record => record.product_id),
   )
   const selectedDateIsToday = date === today()
+  const filteredProducts = products.filter(product => product.name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+  const loading = recordsLoading || sellOutsLoading || (!demo && productsLoading)
+  const failed = recordsError || sellOutsError || productsError
 
   async function save(event: React.FormEvent) {
     event.preventDefault()
@@ -271,139 +290,113 @@ function BakeryData({ demo }: { demo: boolean }) {
   }
 
   return (
-    <div>
-      {demo ? (demoRecords.length > 0 && (
-        <Dashboard records={demoRecords.map(row => ({
-          day: new Date(`${row.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' }),
-          product: row.product,
-          produced: row.produced,
-          sold: row.sold,
-          waste: row.produced - row.sold,
-        }))} />
-      )) : (
-        <CollectedDashboard
-          products={products}
-          production={records}
-          sellOuts={sellOuts}
-          loading={productsLoading || recordsLoading || sellOutsLoading}
-          failed={productsError || recordsError || sellOutsError}
-        />
+    <>
+      <header className="page-heading">
+        <div>
+          <p className={demo ? 'mode demo' : 'mode'} role="status">{demo ? 'Demo mode' : 'Collected data'}</p>
+          <h1>{view === 'overview' ? 'Bakery overview' : 'Daily log'}</h1>
+          <p>{view === 'overview' ? 'Review production and see what sells out.' : 'Record what you baked and which products sold out.'}</p>
+        </div>
+        {view === 'overview' && <button className="primary" onClick={onOpenLog}>Open daily log <span aria-hidden="true">→</span></button>}
+      </header>
+
+      {view === 'overview' ? (
+        <>
+          {demo && loading && <p role="status">Loading demo data…</p>}
+          {demo && failed && <p role="alert">Could not load demo data. Switch Demo off and on to try again.</p>}
+          {demo ? demoRecords.length > 0 && (
+            <Dashboard records={demoRecords.map(row => ({
+              day: new Date(`${row.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' }),
+              product: row.product,
+              produced: row.produced,
+              sold: row.sold,
+              waste: row.produced - row.sold,
+            }))} />
+          ) : (
+            <>
+              {!loading && !failed && <div className="metrics">
+                <div><span>Units produced</span><strong>{records.reduce((sum, row) => sum + row.quantity, 0).toLocaleString()}</strong></div>
+                <div><span>Days logged</span><strong>{new Set(records.map(row => row.date)).size}</strong></div>
+                <div><span>Sell-outs recorded</span><strong>{sellOuts.length}</strong></div>
+              </div>}
+              <CollectedDashboard products={products} production={records} sellOuts={sellOuts} loading={loading} failed={failed} />
+            </>
+          )}
+        </>
+      ) : (
+        <form className="daily-card" onSubmit={save}>
+          <div className="log-toolbar">
+            <label>Date
+              <input
+                type="date"
+                value={date}
+                required
+                disabled={saving || markingProductId !== null}
+                onChange={event => {
+                  setDate(event.target.value)
+                  setQuantities({})
+                  setMessage('')
+                  setSellOutMessage('')
+                }}
+              />
+            </label>
+            <label>Find a product
+              <input type="search" placeholder="Search by name" value={query} onChange={event => setQuery(event.target.value)} />
+            </label>
+          </div>
+          {demo && <p className="log-note">Demo data is read-only.</p>}
+          {!demo && !selectedDateIsToday && <p className="log-note">Sell-outs can only be recorded for today.</p>}
+          {loading && <p className="log-note" role="status">Loading products and records…</p>}
+          {failed && <p className="log-note" role="alert">Some data could not be loaded. Reload the page to try again.</p>}
+          <div className="log-table">
+            <table>
+              <thead><tr><th scope="col">Product</th><th scope="col">Produced</th><th scope="col">Sell-out</th></tr></thead>
+              <tbody>
+                {filteredProducts.map(product => {
+                  const recorded = recordedForDate.get(product.id)
+                  return (
+                    <tr key={product.id}>
+                      <th scope="row">{product.name}</th>
+                      <td>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          inputMode="numeric"
+                          aria-label={`Produced quantity for ${product.name}`}
+                          disabled={demo || saving || recordsLoading || recordsError || !date}
+                          value={quantities[product.id] ?? (recorded === undefined ? '' : String(recorded))}
+                          onChange={event => setQuantities({ ...quantities, [product.id]: event.target.value })}
+                        />
+                      </td>
+                      <td>
+                        {soldOutForDate.has(product.id) ? <span className="sold-out-label">Sold out</span> :
+                          demo || !selectedDateIsToday ? <span aria-label="No sell-out recorded">—</span> :
+                            <button
+                              type="button"
+                              aria-label={`Mark ${product.name} sold out`}
+                              disabled={sellOutsLoading || sellOutsError || markingProductId !== null}
+                              onClick={() => markSoldOut(product)}
+                            >
+                              {markingProductId === product.id ? 'Saving…' : 'Mark sold out'}
+                            </button>}
+                      </td>
+                    </tr>
+                  )
+                })}
+                {!loading && !failed && filteredProducts.length === 0 && <tr><td colSpan={3}>{query.trim() ? 'No matching products.' : 'No products available.'}</td></tr>}
+              </tbody>
+            </table>
+          </div>
+          <footer className="log-footer">
+            <div role="status">{message && <p>{message}</p>}{sellOutMessage && <p>{sellOutMessage}</p>}</div>
+            {!demo && <button className="primary" type="submit" disabled={saving || recordsLoading || recordsError || !date || !Object.values(quantities).some(value => value.trim())}>
+              {saving ? 'Saving…' : 'Save production'}
+            </button>}
+          </footer>
+        </form>
       )}
-
-      <h2>Products</h2>
-
-      <ul>
-        {products.map(product => (
-          <li key={product.id}>
-            {product.name}
-          </li>
-        ))}
-      </ul>
-
-      <section className="sell-outs" aria-labelledby="sell-outs-heading">
-        <h2 id="sell-outs-heading">Sell-outs</h2>
-        <p>{demo ? 'Simulated sell-outs for the selected date.' : 'Mark a product when it sells out today. The time is recorded automatically.'}</p>
-
-        {!demo && !selectedDateIsToday && (
-          <p className="status">Sell-outs can only be recorded for today.</p>
-        )}
-        {sellOutsLoading && <p>Loading sell-outs…</p>}
-        {sellOutsError && (
-          <p className="status" role="alert">
-            Could not load sell-outs. Reload the page to try again.
-          </p>
-        )}
-
-        <ul className="sell-out-list">
-          {products.map(product => {
-            const soldOut = soldOutForDate.has(product.id)
-            const marking = markingProductId === product.id
-
-            return (
-              <li className="sell-out-row" key={product.id}>
-                <span>{product.name}</span>
-                {soldOut ? (
-                  <span className="sell-out-status">Sold out</span>
-                ) : demo ? null : (
-                  <button
-                    type="button"
-                    disabled={!selectedDateIsToday || sellOutsLoading || sellOutsError || markingProductId !== null}
-                    onClick={() => markSoldOut(product)}
-                  >
-                    {marking ? 'Saving…' : 'Mark sold out'}
-                  </button>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-
-        {sellOutMessage && <p className="status" role="status">{sellOutMessage}</p>}
-      </section>
-
-      <h2>Daily production</h2>
-
-      <form className="production" onSubmit={save}>
-        <label className="production-date">
-          Date
-          <input
-            type="date"
-            value={date}
-            required
-            disabled={saving}
-            onChange={event => {
-              setDate(event.target.value)
-              setQuantities({})
-              setMessage('')
-            }}
-          />
-        </label>
-
-        <table className="production-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Produced</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => {
-              const recorded = recordedForDate.get(product.id)
-
-              return (
-                <tr key={product.id}>
-                  <td>{product.name}</td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      step="1"
-                      inputMode="numeric"
-                      aria-label={`Produced quantity for ${product.name}`}
-                      disabled={demo || saving || recordsLoading || recordsError}
-                      value={quantities[product.id] ?? (recorded === undefined ? '' : String(recorded))}
-                      onChange={event => setQuantities({
-                        ...quantities,
-                        [product.id]: event.target.value,
-                      })}
-                    />
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-
-        {recordsLoading && <p>Loading production records…</p>}
-        {recordsError && <p role="alert">Could not load production records. Reload the page to try again.</p>}
-
-        {!demo && <button type="submit" disabled={saving || recordsLoading || recordsError}>
-          {saving ? 'Saving…' : 'Save production'}
-        </button>}
-
-        {message && <p className="status">{message}</p>}
-      </form>
-    </div>
+    </>
   )
 }
 
