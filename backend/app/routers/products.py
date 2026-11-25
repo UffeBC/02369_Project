@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import Product, ProductCreate, Category
+from ..models import Product, ProductAvailability, ProductCreate, Category
 
 
 router = APIRouter(
@@ -33,31 +33,37 @@ def create_product(
             detail="Category does not exist"
         )
     
-    product = Product(name=data.name, category_id=data.category_id)
-
-
+    name = data.name.strip()
+    if not name:
+        raise HTTPException(status_code=422, detail="Enter a product name.")
+    product = Product(name=name, category_id=data.category_id)
     session.add(product)
     session.commit()
     session.refresh(product)
 
     return product
 
-# Delete a bakery product
-@router.delete("/{product_id}", status_code=204)
-def delete_product(
+@router.patch("/{product_id}/availability")
+def set_product_availability(
     product_id: int,
+    data: ProductAvailability,
     session: Session = Depends(get_session)
 ):
-    # Find the product
     product = session.get(Product, product_id)
-
-    # Check if it exists
     if product is None:
         raise HTTPException(
             status_code=404,
             detail="Product not found"
         )
 
-    # Delete the product
-    session.delete(product)
+    product.active = data.active
+    session.add(product)
     session.commit()
+    session.refresh(product)
+    return product
+
+
+@router.delete("/{product_id}", status_code=204, deprecated=True)
+def disable_product(product_id: int, session: Session = Depends(get_session)):
+    # Retain the product ID and history for clients calling the former delete route.
+    set_product_availability(product_id, ProductAvailability(active=False), session)

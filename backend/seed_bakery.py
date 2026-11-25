@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
 
-from sqlalchemy import inspect
-from sqlmodel import Session, SQLModel, select
+from sqlmodel import Session, select
 
-from app.database import engine
+from app.database import engine, initialize_database
 from app.models import Category, Product
 
 
@@ -12,14 +11,7 @@ def seed_catalog(database_engine=engine):
     catalog = json.loads(
         Path(__file__).with_name("bakery_seed.json").read_text(encoding="utf-8")
     )
-    SQLModel.metadata.create_all(database_engine)
-    # Existing SQLite tables are left as-is by create_all.
-    with database_engine.begin() as connection:
-        columns = inspect(connection).get_columns("product")
-        if all(column["name"] != "category_id" for column in columns):
-            connection.exec_driver_sql(
-                "ALTER TABLE product ADD COLUMN category_id INTEGER REFERENCES category(id)"
-            )
+    initialize_database(database_engine)
 
     with Session(database_engine) as session:
         categories_by_name = {

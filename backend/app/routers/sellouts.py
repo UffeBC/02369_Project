@@ -18,11 +18,14 @@ def create_sell_out(
     data: SellOutRecordCreate,
     session: Session = Depends(get_session),
 ):
-    if session.get(Product, data.product_id) is None:
+    product = session.get(Product, data.product_id)
+    if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Product not found",
         )
+    if not product.active:
+        raise HTTPException(status_code=409, detail="Product is disabled.")
 
     now = datetime.now(timezone.utc)
     records = session.exec(

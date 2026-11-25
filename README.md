@@ -59,7 +59,8 @@ Open <http://localhost:5173>. Vite forwards requests under `/api` to the backend
 | `GET` | `/api/health` | Returns API health status |
 | `GET` | `/api/products` | Lists products |
 | `POST` | `/api/products` | Creates a product from `{"name": "..."}` |
-| `DELETE` | `/api/products/{product_id}` | Deletes a product by ID |
+| `PATCH` | `/api/products/{product_id}/availability` | Enables or disables a product with `{"active": true}` or `{"active": false}`. Product history is preserved. |
+| `PUT` | `/api/production/daily-log` | Saves a day's production and sales entries together |
 
 Interactive API documentation is available at <http://127.0.0.1:8000/docs> while the backend is running.
 
