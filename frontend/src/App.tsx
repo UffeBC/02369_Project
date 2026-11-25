@@ -1,22 +1,32 @@
 import { useEffect, useState } from 'react'
 import Dashboard from './Dashboard'
+import CollectedDashboard from './CollectedDashboard'
+import { parseSellOutTime } from './dashboardStats'
 
-type Product = {
+export type Product = {
   id: number
   name: string
 }
 
-type ProductionRecord = {
+export type ProductionRecord = {
   id: number
   product_id: number
   date: string
   quantity: number
 }
 
-type SellOutRecord = {
+export type SellOutRecord = {
   id: number
   product_id: number
   sold_out_at: string
+}
+
+type DemoRecord = {
+  date: string
+  product: string
+  produced: number
+  sold: number
+  sold_out_at: string | null
 }
 
 function today(): string {
@@ -24,11 +34,32 @@ function today(): string {
 }
 
 function localDate(timestamp: string): string {
-  return new Date(timestamp).toLocaleDateString('en-CA')
+  return parseSellOutTime(timestamp).toLocaleDateString('en-CA')
 }
 
 function App() {
+  const [demo, setDemo] = useState(false)
+
+  return (
+    <div>
+      <h1>Maria's Bakery</h1>
+      <details className="settings">
+        <summary>Settings</summary>
+        <button type="button" aria-pressed={demo} onClick={() => setDemo(!demo)}>
+          Demo
+        </button>
+      </details>
+      <p role="status">{demo ? 'Demo mode · simulated data' : 'Collected data'}</p>
+      <BakeryData key={String(demo)} demo={demo} />
+    </div>
+  )
+}
+
+function BakeryData({ demo }: { demo: boolean }) {
   const [products, setProducts] = useState<Product[]>([])
+  const [productsLoading, setProductsLoading] = useState(true)
+  const [productsError, setProductsError] = useState(false)
+  const [demoRecords, setDemoRecords] = useState<DemoRecord[]>([])
   const [records, setRecords] = useState<ProductionRecord[]>([])
   const [sellOuts, setSellOuts] = useState<SellOutRecord[]>([])
   const [date, setDate] = useState(today())
@@ -52,7 +83,11 @@ function App() {
         return response.json()
       })
       .then(data => setProducts(data))
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error)
+        setProductsError(true)
+      })
+      .finally(() => setProductsLoading(false))
   }
 
   function loadRecords() {
@@ -90,10 +125,48 @@ function App() {
   }
 
   useEffect(() => {
+    if (demo) {
+      const controller = new AbortController()
+      fetch('/api/demo', { signal: controller.signal })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch demo data')
+          return response.json() as Promise<DemoRecord[]>
+        })
+        .then(rows => {
+          const productIds = new Map<string, number>()
+          const production: ProductionRecord[] = []
+          const events: SellOutRecord[] = []
+          rows.forEach((row, index) => {
+            if (!productIds.has(row.product)) productIds.set(row.product, productIds.size + 1)
+            const productId = productIds.get(row.product)!
+            production.push({ id: index + 1, product_id: productId, date: row.date, quantity: row.produced })
+            if (row.sold_out_at) {
+              events.push({ id: index + 1, product_id: productId, sold_out_at: row.sold_out_at })
+            }
+          })
+          setProducts(Array.from(productIds, ([name, id]) => ({ name, id })))
+          setDemoRecords(rows)
+          setRecords(production)
+          setSellOuts(events)
+          setDate(rows.reduce((latest, row) => row.date > latest ? row.date : latest, ''))
+        })
+        .catch(error => {
+          if (controller.signal.aborted) return
+          console.error(error)
+          setRecordsError(true)
+          setSellOutsError(true)
+        })
+        .finally(() => {
+          if (controller.signal.aborted) return
+          setRecordsLoading(false)
+          setSellOutsLoading(false)
+        })
+      return () => controller.abort()
+    }
     loadProducts()
     loadRecords()
     loadSellOuts()
-  }, [])
+  }, [demo])
 
   const recordedForDate = new Map(
     records.filter(record => record.date === date).map(record => [record.product_id, record.quantity]),
@@ -107,6 +180,7 @@ function App() {
 
   async function save(event: React.FormEvent) {
     event.preventDefault()
+    if (demo) return
     setMessage('')
 
     const entries = Object.entries(quantities).filter(([, value]) => value.trim() !== '')
@@ -165,6 +239,7 @@ function App() {
   }
 
   async function markSoldOut(product: Product) {
+    if (demo) return
     setMarkingProductId(product.id)
     setSellOutMessage('')
 
@@ -197,8 +272,23 @@ function App() {
 
   return (
     <div>
-      <h1>Maria's Bakery</h1>
-      <Dashboard />
+      {demo ? (demoRecords.length > 0 && (
+        <Dashboard records={demoRecords.map(row => ({
+          day: new Date(`${row.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' }),
+          product: row.product,
+          produced: row.produced,
+          sold: row.sold,
+          waste: row.produced - row.sold,
+        }))} />
+      )) : (
+        <CollectedDashboard
+          products={products}
+          production={records}
+          sellOuts={sellOuts}
+          loading={productsLoading || recordsLoading || sellOutsLoading}
+          failed={productsError || recordsError || sellOutsError}
+        />
+      )}
 
       <h2>Products</h2>
 
@@ -212,9 +302,9 @@ function App() {
 
       <section className="sell-outs" aria-labelledby="sell-outs-heading">
         <h2 id="sell-outs-heading">Sell-outs</h2>
-        <p>Mark a product when it sells out today. The time is recorded automatically.</p>
+        <p>{demo ? 'Simulated sell-outs for the selected date.' : 'Mark a product when it sells out today. The time is recorded automatically.'}</p>
 
-        {!selectedDateIsToday && (
+        {!demo && !selectedDateIsToday && (
           <p className="status">Sell-outs can only be recorded for today.</p>
         )}
         {sellOutsLoading && <p>Loading sell-outs…</p>}
@@ -234,7 +324,7 @@ function App() {
                 <span>{product.name}</span>
                 {soldOut ? (
                   <span className="sell-out-status">Sold out</span>
-                ) : (
+                ) : demo ? null : (
                   <button
                     type="button"
                     disabled={!selectedDateIsToday || sellOutsLoading || sellOutsError || markingProductId !== null}
@@ -290,7 +380,7 @@ function App() {
                       step="1"
                       inputMode="numeric"
                       aria-label={`Produced quantity for ${product.name}`}
-                      disabled={saving || recordsLoading || recordsError}
+                      disabled={demo || saving || recordsLoading || recordsError}
                       value={quantities[product.id] ?? (recorded === undefined ? '' : String(recorded))}
                       onChange={event => setQuantities({
                         ...quantities,
@@ -307,9 +397,9 @@ function App() {
         {recordsLoading && <p>Loading production records…</p>}
         {recordsError && <p role="alert">Could not load production records. Reload the page to try again.</p>}
 
-        <button type="submit" disabled={saving || recordsLoading || recordsError}>
+        {!demo && <button type="submit" disabled={saving || recordsLoading || recordsError}>
           {saving ? 'Saving…' : 'Save production'}
-        </button>
+        </button>}
 
         {message && <p className="status">{message}</p>}
       </form>
