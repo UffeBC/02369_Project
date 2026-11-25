@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlmodel import Session, select
 
 from ..database import get_session
@@ -11,9 +11,10 @@ router = APIRouter(
 )
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
-def create_production_record(
+@router.post("")
+def save_production_record(
     data: ProductionRecordCreate,
+    response: Response,
     session: Session = Depends(get_session)
 ):
     product = session.get(Product, data.product_id)
@@ -24,11 +25,23 @@ def create_production_record(
             detail="Product not found"
         )
 
-    record = ProductionRecord(
-        product_id=data.product_id,
-        date=data.date,
-        quantity=data.quantity
-    )
+    record = session.exec(
+        select(ProductionRecord).where(
+            ProductionRecord.product_id == data.product_id,
+            ProductionRecord.date == data.date,
+        )
+    ).first()
+
+    if record is not None:
+        record.quantity = data.quantity
+        response.status_code = status.HTTP_200_OK
+    else:
+        record = ProductionRecord(
+            product_id=data.product_id,
+            date=data.date,
+            quantity=data.quantity,
+        )
+        response.status_code = status.HTTP_201_CREATED
 
     session.add(record)
     session.commit()
