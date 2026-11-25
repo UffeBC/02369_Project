@@ -8,6 +8,7 @@ import ProductPhoto from './ProductPhoto'
 import ProductManager from './ProductManager'
 import { buildBakeHistory, estimateBake } from './bakePlan'
 import { shiftDate } from './chartData'
+import { demoSalesUrl, publicDemo } from './demoData'
 import { parseSellOutTime } from './dashboardStats'
 
 export type Product = {
@@ -59,7 +60,7 @@ function localDate(timestamp: string): string {
 }
 
 function App() {
-  const [demo, setDemo] = useState(false)
+  const [demo, setDemo] = useState(publicDemo)
   const [view, setView] = useState<View>('overview')
   const [quickBakeList, setQuickBakeList] = useState(false)
 
@@ -78,13 +79,13 @@ function App() {
             <button aria-current={view === 'daily' ? 'page' : undefined} onClick={() => setView('daily')}>Daily log</button>
             <button aria-current={view === 'products' ? 'page' : undefined} onClick={() => setView('products')}>Products</button>
           </nav>
-          <details className="settings">
+          {!publicDemo && <details className="settings">
             <summary>Settings</summary>
             <div className="settings-panel">
               <button type="button" role="switch" aria-checked={demo} onClick={() => setDemo(!demo)}>Demo</button>
               <p>{demo ? 'Showing simulated data.' : 'Showing collected data.'}</p>
             </div>
-          </details>
+          </details>}
         </div>
       </header>
       <main>
@@ -190,7 +191,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
   useEffect(() => {
     if (demo) {
       const controller = new AbortController()
-      fetch('/api/demo', { signal: controller.signal })
+      fetch(demoSalesUrl, { signal: controller.signal })
         .then(response => {
           if (!response.ok) throw new Error('Failed to fetch demo data')
           return response.json() as Promise<DemoRecord[]>
@@ -454,7 +455,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
             salesFailed={salesError}
           />
           {demo && loading && <p role="status">Loading demo data…</p>}
-          {demo && failed && <p role="alert">Could not load demo data. Switch Demo off and on to try again.</p>}
+          {demo && failed && <p role="alert">Could not load demo data. Reload the page to try again.</p>}
           {demo ? demoRecords.length > 0 && (
             <Dashboard records={demoRecords.map(row => ({
               day: new Date(`${row.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' }),

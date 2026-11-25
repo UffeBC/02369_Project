@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Product } from './App'
 import ProductPhoto from './ProductPhoto'
+import { publicDemo } from './demoData'
 
 type Category = { id: number; name: string }
 
@@ -74,7 +75,7 @@ export default function ProductManager({ products, demo, loading, failed, disabl
 
   return (
     <section className="daily-card">
-      {demo ? <p className="catalog-note">Switch off Demo to manage your collected product catalog.</p> : (
+      {demo ? <p className="catalog-note">{publicDemo ? 'This demo catalog is read-only.' : 'Switch off Demo to manage your collected product catalog.'}</p> : (
         <form className="catalog-form" onSubmit={event => {
           event.preventDefault()
           if (locked || !name.trim()) return

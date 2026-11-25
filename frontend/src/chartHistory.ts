@@ -2,21 +2,23 @@ import { useEffect, useState } from 'react'
 import type { Product, ProductionRecord, SalesRecord, SellOutRecord } from './App'
 import type { ChartDay } from './chartData'
 import { parseSellOutTime } from './dashboardStats'
-
-type Category = { id: number; name: string; leftover_target_percent: number | null }
+import { loadDemoCategories } from './demoData'
+import type { ChartCategory } from './demoData'
 
 export function useChartCategories(demo: boolean) {
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<ChartCategory[]>([])
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [categoriesFailed, setCategoriesFailed] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(demo ? '/api/demo/categories' : '/api/categories', { signal: controller.signal })
-      .then(response => {
+    const request = demo
+      ? loadDemoCategories(controller.signal)
+      : fetch('/api/categories', { signal: controller.signal }).then(response => {
         if (!response.ok) throw new Error('Could not load categories')
-        return response.json() as Promise<Category[]>
+        return response.json() as Promise<ChartCategory[]>
       })
+    request
       .then(setCategories)
       .catch(() => {
         if (!controller.signal.aborted) setCategoriesFailed(true)
@@ -32,7 +34,7 @@ export function useChartCategories(demo: boolean) {
 
 export function buildChartHistory(
   products: Product[],
-  categories: Category[],
+  categories: ChartCategory[],
   production: ProductionRecord[],
   sales: SalesRecord[],
   sellOuts: SellOutRecord[] = [],
