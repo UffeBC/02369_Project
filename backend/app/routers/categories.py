@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import Category, CategoryCreate
+from ..models import Category, CategoryCreate, CategoryLeftoverTarget
 
 
 router = APIRouter(
@@ -45,6 +45,22 @@ def create_category(
     session.commit()
     session.refresh(category)
 
+    return category
+
+
+@router.patch("/{category_id}/leftover-target")
+def update_leftover_target(
+    category_id: int,
+    data: CategoryLeftoverTarget,
+    session: Session = Depends(get_session),
+) -> Category:
+    category = session.get(Category, category_id)
+    if category is None:
+        raise HTTPException(status_code=404, detail="Category not found.")
+    category.leftover_target_percent = data.leftover_target_percent
+    session.add(category)
+    session.commit()
+    session.refresh(category)
     return category
 
 
