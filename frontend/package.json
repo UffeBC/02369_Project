@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "build:demo": "tsc -b && vite build --mode pages --base ./",
     "lint": "oxlint",
+    "test": "node --test tests/dashboard.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {
