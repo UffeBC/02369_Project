@@ -7,8 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from .database import initialize_database
-from .routers import categories, production, products, sales, sellouts
-
+from .routers import categories, leftovers, production, products, sales, sellouts
 
 
 @asynccontextmanager
@@ -26,6 +25,7 @@ app = FastAPI(
 # Connect product routes
 app.include_router(products.router)
 app.include_router(production.router)
+app.include_router(leftovers.router)
 app.include_router(sellouts.router)
 app.include_router(sales.router)
 

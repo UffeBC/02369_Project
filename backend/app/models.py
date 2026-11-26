@@ -76,3 +76,15 @@ class DailySalesCreate(SQLModel):
     product_id: int
     date: date
     quantity: int = Field(ge=0)
+
+class Leftover(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    product_id: int = Field(foreign_key="product.id")
+    date: date
+    quantity: int = Field(ge=0)
+
+
+class LeftoverCreate(SQLModel):
+    product_id: int
+    date: date
+    quantity: int = Field(ge=0)
