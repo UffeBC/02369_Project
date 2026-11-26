@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlmodel import Session, select
 
 from ..database import get_session
@@ -13,6 +13,7 @@ router = APIRouter(
 @router.post("", status_code=status.HTTP_201_CREATED)
 def create_leftover(
     data: LeftoverCreate,
+    response: Response,
     session: Session = Depends(get_session)
 ):
     product = session.get(Product, data.product_id)
@@ -23,11 +24,28 @@ def create_leftover(
             detail="Product not found"
         )
 
-    leftover = Leftover(
-        product_id=data.product_id,
-        date=data.date,
-        quantity=data.quantity
-    )
+    if not product.active:
+        raise HTTPException(
+            status_code=409,
+            detail="Product is disabled"
+        )
+
+    leftover = session.exec(
+        select(Leftover).where(
+            Leftover.product_id == data.product_id,
+            Leftover.date == data.date
+        )
+    ).first()
+
+    if leftover is None:
+        leftover = Leftover(
+            product_id=data.product_id,
+            date=data.date,
+            quantity=data.quantity
+        )
+    else:
+        leftover.quantity = data.quantity
+        response.status_code = status.HTTP_200_OK
 
     session.add(leftover)
     session.commit()

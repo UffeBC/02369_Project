@@ -25,6 +25,13 @@ export type ProductionRecord = {
   quantity: number
 }
 
+export type LeftoverRecord = {
+  id: number
+  product_id: number
+  date: string
+  quantity: number
+}
+
 export type SalesRecord = Omit<ProductionRecord, 'id'>
 type View = 'overview' | 'daily' | 'planning' | 'charts' | 'products'
 
@@ -119,6 +126,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
   const [productsError, setProductsError] = useState(false)
   const [demoRecords, setDemoRecords] = useState<DemoRecord[]>([])
   const [records, setRecords] = useState<ProductionRecord[]>([])
+  const [leftovers, setLeftovers] = useState<LeftoverRecord[]>([])
   const [sales, setSales] = useState<SalesRecord[]>([])
   const [salesLoading, setSalesLoading] = useState(!demo)
   const [salesError, setSalesError] = useState(false)
@@ -126,6 +134,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
   const [date, setDate] = useState(today())
   const [quantities, setQuantities] = useState<Record<number, string>>({})
   const [soldQuantities, setSoldQuantities] = useState<Record<number, string>>({})
+  const [leftoverQuantities, setLeftoverQuantities] = useState<Record<number, string>>({})
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [recordsLoading, setRecordsLoading] = useState(true)
@@ -169,6 +178,21 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
         setRecordsError(true)
       })
       .finally(() => setRecordsLoading(false))
+  }
+
+  function loadLeftovers() {
+  fetch('/api/leftovers')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch leftovers')
+      }
+
+      return response.json()
+    })
+    .then(data => setLeftovers(data))
+    .catch(error => {
+      console.error(error)
+    })
   }
 
   function loadSellOuts() {
@@ -238,6 +262,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
     }
     loadProducts()
     loadRecords()
+    loadLeftovers()
     loadSellOuts()
     const controller = new AbortController()
     fetch('/api/sales', { signal: controller.signal })
@@ -260,6 +285,11 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
   const recordedForDate = new Map(
     records.filter(record => record.date === date).map(record => [record.product_id, record.quantity]),
   )
+  const leftoversForDate = new Map(
+  leftovers
+    .filter(record => record.date === date)
+    .map(record => [record.product_id, record.quantity])
+)
   const salesForDate = new Map(sales.filter(row => row.date === date).map(row => [row.product_id, row.quantity]))
   const soldOutForDate = new Set(
     sellOuts
@@ -395,6 +425,67 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
     }
   }
 
+async function saveLeftovers() {
+  const entries = Object.entries(leftoverQuantities)
+    .filter(([, quantity]) => quantity.trim() !== '')
+
+  if (entries.length === 0) return
+
+  if (entries.some(([, quantity]) =>
+    !Number.isSafeInteger(Number(quantity)) || Number(quantity) < 0
+  )) {
+    setMessage('Leftover quantities must be whole numbers of zero or more.')
+    return
+  }
+
+  setSaving(true)
+  setMessage('')
+
+  const savedIds: number[] = []
+  let failed = false
+
+  for (const [productId, quantity] of entries) {
+    try {
+      const response = await fetch('/api/leftovers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: Number(productId),
+          date,
+          quantity: Number(quantity),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save leftover')
+      }
+
+      savedIds.push(Number(productId))
+    } catch (error) {
+      console.error(error)
+      failed = true
+    }
+  }
+
+  setLeftoverQuantities(previous => {
+    const remaining = { ...previous }
+    for (const id of savedIds) {
+      delete remaining[id]
+    }
+    return remaining
+  })
+
+  loadLeftovers()
+
+  if (failed) {
+    setMessage('Some leftovers could not be saved. Please try again.')
+  } else {
+    setMessage('Leftovers saved.')
+  }
+
+  setSaving(false)
+}
+
   async function markSoldOut(product: Product) {
     if (demo || !product.active) return
     setMarkingProductId(product.id)
@@ -515,6 +606,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
                   setDate(event.target.value)
                   setQuantities({})
                   setSoldQuantities({})
+                  setLeftoverQuantities({})
                   setMessage('')
                   setSellOutMessage('')
                 }}
@@ -549,7 +641,7 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
           {failed && <p className="log-note" role="alert">Some data could not be loaded. Reload the page to try again.</p>}
           <div className="log-table">
             <table>
-              <thead><tr><th scope="col">Product</th><th scope="col">Produced</th><th scope="col">Sold</th><th scope="col">Sell-out</th></tr></thead>
+              <thead><tr><th scope="col">Product</th><th scope="col">Produced</th><th scope="col">Sold</th><th scope="col">Sell-out</th><th scope="col">Leftovers</th></tr></thead>
               <tbody>
                 {filteredProducts.map(product => {
                   const recorded = recordedForDate.get(product.id)
@@ -602,16 +694,44 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
                             >
                               {markingProductId === product.id ? 'Saving…' : 'Mark sold out'}
                             </button>}
+                                            </td>
+                      <td>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          inputMode="numeric"
+                          aria-label={`Leftovers for ${product.name}`}
+                          disabled={demo || !product.active || !date}
+                          value={leftoverQuantities[product.id] ?? leftoversForDate.get(product.id) ?? ''}
+                          onChange={event => setLeftoverQuantities({
+                            ...leftoverQuantities,
+                            [product.id]: event.target.value,
+                          })}
+                        />
                       </td>
                     </tr>
                   )
                 })}
-                {!loading && !failed && filteredProducts.length === 0 && <tr><td colSpan={4}>{query.trim() ? 'No matching products.' : 'No products available.'}</td></tr>}
+                {!loading && !failed && filteredProducts.length === 0 && <tr><td colSpan={5}>{query.trim() ? 'No matching products.' : 'No products available.'}</td></tr>}
               </tbody>
             </table>
           </div>
           <footer className="log-footer">
             <div role="status">{message && <p>{message}</p>}{sellOutMessage && <p>{sellOutMessage}</p>}</div>
+            {!demo && (
+  <button
+    type="button"
+    onClick={saveLeftovers}
+    disabled={
+      saving ||
+      !date ||
+      Object.values(leftoverQuantities).every(value => value.trim() === '')
+    }
+  >
+    {saving ? 'Saving…' : 'Save Leftovers'}
+  </button>
+)}
             {!demo && <button className="primary" type="submit" disabled={saving || !date || ![...Object.values(quantities), ...Object.values(soldQuantities)].some(value => value.trim())}>
               {saving ? 'Saving…' : 'Save daily log'}
             </button>}

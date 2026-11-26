@@ -95,3 +95,59 @@ def test_product_not_found():
     finally:
         app.dependency_overrides.clear()
         engine.dispose()
+
+def test_same_product_and_date_updates_existing_leftover():
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
+    )
+    SQLModel.metadata.create_all(engine)
+
+    def get_test_session():
+        with Session(engine) as session:
+            yield session
+
+    app.dependency_overrides[get_session] = get_test_session
+
+    try:
+        with Session(engine) as session:
+            product = Product(name="Croissant")
+            session.add(product)
+            session.commit()
+            session.refresh(product)
+            product_id = product.id
+
+        client = TestClient(app)
+
+        first_response = client.post(
+            "/api/leftovers",
+            json={
+                "product_id": product_id,
+                "date": "2026-11-10",
+                "quantity": 8
+            }
+        )
+
+        second_response = client.post(
+            "/api/leftovers",
+            json={
+                "product_id": product_id,
+                "date": "2026-11-10",
+                "quantity": 5
+            }
+        )
+
+        assert first_response.status_code == 201
+        assert second_response.status_code == 200
+
+        assert first_response.json()["id"] == second_response.json()["id"]
+        assert second_response.json()["quantity"] == 5
+
+        response = client.get("/api/leftovers")
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+
+    finally:
+        app.dependency_overrides.clear()
+        engine.dispose()
