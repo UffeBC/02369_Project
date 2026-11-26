@@ -5,15 +5,10 @@ import './Dashboard.css'
 export default function Dashboard({ records }: { records: DailyRecord[] }) {
   // Keep the calculations together so the table and graphs use the same figures.
   const products = [...new Set(records.map(record => record.product))]
-  const days = [...new Set(records.map(record => record.day))]
   const productRows = products.map(name => ({
     name, ...getTotals(records.filter(record => record.product === name)),
   }))
-  const dayRows = days.map(name => ({
-    name, ...getTotals(records.filter(record => record.day === name)),
-  }))
   const totals = getTotals(records)
-  const largestWaste = Math.max(1, ...dayRows.map(row => row.waste))
 
   return (
     <section className="dashboard">
@@ -50,35 +45,21 @@ export default function Dashboard({ records }: { records: DailyRecord[] }) {
         </table>
       </div>
 
-      <div className="dashboard-graphs">
-        <div>
-          <h3>Waste by weekday</h3>
-          {dayRows.map(row => (
-            <div className="dashboard-row" key={row.name}>
-              <span>{row.name}</span>
-              <div className="dashboard-track" aria-hidden="true">
-                <div className="dashboard-bar" style={{ width: `${row.waste / largestWaste * 100}%` }} />
-              </div>
-              <span>{row.waste} items</span>
+      <details className="chart-values">
+        <summary>Sell-out frequency by product</summary>
+        {productRows.map(row => (
+          <div className="dashboard-row" key={row.name}>
+            <span>{row.name}</span>
+            <div className="dashboard-track" aria-hidden="true">
+              <div className="dashboard-bar sold-out" style={{
+                width: `${row.productionDays ? row.soldOutDays / row.productionDays * 100 : 0}%`,
+              }} />
             </div>
-          ))}
-        </div>
-        <div>
-          <h3>Sell-out frequency</h3>
-          {productRows.map(row => (
-            <div className="dashboard-row" key={row.name}>
-              <span>{row.name}</span>
-              <div className="dashboard-track" aria-hidden="true">
-                <div className="dashboard-bar sold-out" style={{
-                  width: `${row.productionDays ? row.soldOutDays / row.productionDays * 100 : 0}%`,
-                }} />
-              </div>
-              <span>{row.soldOutDays}/{row.productionDays} days</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <p>The demo counts all unsold units as waste. Sold out means everything produced that day was sold.</p>
+            <span>{row.soldOutDays}/{row.productionDays} days</span>
+          </div>
+        ))}
+      </details>
+      <p>These demo totals count unsold units as waste. A sold-out day here means all units baked for that product were sold.</p>
       <p>The total sell-out count is across product-days, not calendar days.</p>
     </section>
   )

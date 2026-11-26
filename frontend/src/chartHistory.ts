@@ -32,6 +32,8 @@ export function useChartCategories(demo: boolean) {
   return { categories, setCategories, categoriesLoading, categoriesFailed }
 }
 
+const bakeryDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' })
+
 export function buildChartHistory(
   products: Product[],
   categories: ChartCategory[],
@@ -55,7 +57,7 @@ export function buildChartHistory(
   for (const row of production) getDay(row.product_id, row.date).produced = row.quantity
   for (const row of sales) getDay(row.product_id, row.date).sold = row.quantity
   for (const row of sellOuts) {
-    const date = parseSellOutTime(row.sold_out_at).toLocaleDateString('en-CA', { timeZone: 'Europe/Copenhagen' })
+    const date = bakeryDate.format(parseSellOutTime(row.sold_out_at))
     getDay(row.product_id, date).sellOuts++
   }
   return [...days.values()]

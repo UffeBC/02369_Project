@@ -107,3 +107,13 @@ Every dated note includes a **Who did what** line so our individual contribution
 - **What we completed:** Added an isolated in-memory test setup and 10 production tests covering create, update/upsert, validation, unknown product, zero quantity, separate products and dates, and the list endpoint.
 - **Verification:** `cd backend && .venv/bin/pytest -q` passes with 13 tests (10 new production tests and the 3 existing sell-out tests). PR #15 was merged as commit `d2ac54b`.
 - **Evidence:** [PR #15](https://github.com/UffeBC/02369_Project/pull/15).
+
+### 2026-11-26 — Weekday dashboard and sample-data checks — Islam
+
+- **Status:** Task 20 is ready for review. The sample checks for task 21 pass. Bakery feedback is pending.
+- **Tasks:** 20 and 21
+- **Who did what:** Islam is responsible for the weekday comparison and its calculation tests. The view uses the group's existing daily log and chart calculations.
+- **What changed:** On the overview, we can pick one product or the whole bakery and compare weekdays. Each row shows how many units were left, what share of the bake that represents, and how often staff marked a sell-out. A blank sales entry leaves that bake out of the unsold figures.
+- **Verification:** In Demo, select **Croissant m. smør**. The Monday row matches the sample records: 29 unsold out of 206 baked (14.1%) and 6 recorded sell-outs. All 7 dashboard tests pass, including 4 new weekday checks. The frontend lint, build and demo build pass.
+- **Evidence:** [Dashboard tests](frontend/tests/dashboard.test.ts). Run `npm test` from `frontend` with Node 24.
+- **Next action:** Ask someone at the bakery to pick a product and find the weekday it sold out most often. Check what they would call unsold items that get used the next day. Record their feedback here before closing task 21.

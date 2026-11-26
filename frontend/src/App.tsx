@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import Dashboard from './Dashboard'
+import WeekdayPatterns from './WeekdayPatterns'
 import CollectedDashboard from './CollectedDashboard'
 import Planning from './Planning'
 import ChartBuilder from './ChartBuilder'
@@ -454,11 +455,15 @@ function BakeryData({ demo, view, quickBakeList, setQuickBakeList, onOpenLog, on
             failed={recordsError || productsError}
             salesFailed={salesError}
           />
+          {!loading && !failed && !salesLoading && (salesError
+            ? <p role="alert">Weekday patterns are unavailable because sales could not be loaded.</p>
+            : <WeekdayPatterns products={products} production={records} sales={sales} sellOuts={sellOuts} />
+          )}
           {demo && loading && <p role="status">Loading demo data…</p>}
           {demo && failed && <p role="alert">Could not load demo data. Reload the page to try again.</p>}
           {demo ? demoRecords.length > 0 && (
             <Dashboard records={demoRecords.map(row => ({
-              day: new Date(`${row.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' }),
+              day: row.date,
               product: row.product,
               produced: row.produced,
               sold: row.sold,

@@ -19,9 +19,13 @@ export function shiftDate(value: string, days: number): string {
   return date.toISOString().slice(0, 10)
 }
 
+function weekdayIndex(date: string): number {
+  return (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7
+}
+
 function groupDate(date: string, grouping: ChartGrouping): string {
   if (grouping === 'day') return date
-  const weekday = (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7
+  const weekday = weekdayIndex(date)
   return grouping === 'week' ? shiftDate(date, -weekday) : String(weekday)
 }
 
@@ -79,6 +83,28 @@ function productionBreakdown(rows: ChartDay[]): ProductionBreakdown | null {
     result.matchedDays++
   }
   return hasProduction ? result : null
+}
+
+export function weekdayPatterns(history: ChartDay[], productId?: number) {
+  const buckets = weekdays.map((): ChartDay[] => [])
+  for (const row of history) {
+    if (productId === undefined || row.productId === productId) {
+      buckets[weekdayIndex(row.date)].push(row)
+    }
+  }
+
+  return buckets.flatMap((rows, index) => {
+    if (rows.length === 0) return []
+    const totals = productionBreakdown(rows)
+    // Bakes without a closing sales count have no known leftover quantity.
+    const baked = totals ? totals.produced - totals.unknown : 0
+    const unsold = totals?.matchedDays ? baked - totals.sold : null
+    return [{
+      weekday: weekdays[index], baked, unsold,
+      unsoldPercent: baked > 0 && unsold !== null ? 100 * unsold / baked : null,
+      sellOuts: rows.reduce((sum, row) => sum + row.sellOuts, 0),
+    }]
+  })
 }
 
 function sellThrough(rows: ChartDay[]): SellThrough | null {

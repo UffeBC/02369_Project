@@ -21,3 +21,19 @@
   .dashboard { padding: 12px; }
   .dashboard-graphs { grid-template-columns: 1fr; gap: 8px; }
 }
+
+.weekday-patterns { margin-bottom: 18px; }
+.weekday-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.weekday-heading h2 { margin: 0; }
+.weekday-heading label { display: flex; align-items: center; gap: 8px; max-width: 100%; }
+.weekday-heading select { min-width: 0; max-width: 100%; }
+.weekday-patterns thead th { white-space: normal; }
+.weekday-value { display: flex; align-items: center; justify-content: end; gap: 8px; }
+.weekday-value .dashboard-track { width: clamp(40px, 12vw, 160px); height: 8px; border-radius: 4px; overflow: hidden; }
+.weekday-value span { min-width: 5ch; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 450px) {
+  .weekday-patterns th, .weekday-patterns td { padding: 7px 4px; }
+  .weekday-value { flex-direction: column-reverse; align-items: end; gap: 3px; }
+  .weekday-value .dashboard-track { width: 42px; height: 5px; }
+}
