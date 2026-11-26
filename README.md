@@ -2,6 +2,14 @@
 
 Marias Bageri is a course project for Software Processes and Patterns (DTU 02369). The product is being developed for the bakery; the current codebase is an early full-stack foundation with a product list backed by a local database.
 
+## Open the demo
+
+[Open the bakery demo](https://uffebc.github.io/02369_Project/) once the first GitHub Pages deployment succeeds. It opens in read-only Demo mode with the simulated bakery records and runs without the Python backend.
+
+To publish it, merge the workflow into the repository's default branch, then select **Settings → Pages → Source → GitHub Actions**. Run **Publish bakery demo** from the **Actions** tab. The deployment provides the clickable URL on the workflow run and in **Settings → Pages**.
+
+To preview the same build locally, run `npm run build:demo` and then `npm run preview` in `frontend`.
+
 ## Current functionality
 
 - The web app displays bakery products returned by the backend.
@@ -59,7 +67,8 @@ Open <http://localhost:5173>. Vite forwards requests under `/api` to the backend
 | `GET` | `/api/health` | Returns API health status |
 | `GET` | `/api/products` | Lists products |
 | `POST` | `/api/products` | Creates a product from `{"name": "..."}` |
-| `DELETE` | `/api/products/{product_id}` | Deletes a product by ID |
+| `PATCH` | `/api/products/{product_id}/availability` | Enables or disables a product with `{"active": true}` or `{"active": false}`. Product history is preserved. |
+| `PUT` | `/api/production/daily-log` | Saves a day's production and sales entries together |
 
 Interactive API documentation is available at <http://127.0.0.1:8000/docs> while the backend is running.
 

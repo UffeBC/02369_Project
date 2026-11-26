@@ -6,6 +6,11 @@ export type DailyRecord = {
   waste: number
 }
 
+export function parseSellOutTime(timestamp: string): Date {
+  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/.test(timestamp)
+  return new Date(hasTimezone ? timestamp : `${timestamp}Z`)
+}
+
 export function getTotals(records: DailyRecord[]) {
   const produced = records.reduce((sum, record) => sum + record.produced, 0)
   const sold = records.reduce((sum, record) => sum + record.sold, 0)

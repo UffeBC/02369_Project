@@ -1,11 +1,12 @@
 /* Scoped to the dashboard so the existing page styles can stay as they are. */
-.dashboard { margin: 24px 16px; padding: 20px; border: 1px solid var(--border); text-align: left; }
+.dashboard { margin: 0; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 15px; text-align: left; }
 .dashboard h2 { margin-bottom: 8px; }
 .dashboard p { font-size: 13px; margin: 8px 0; }
-.dashboard-table { overflow-x: auto; margin: 20px 0; }
+.dashboard-table { overflow: auto; max-height: 420px; margin: 12px 0; }
 .dashboard table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 14px; }
-.dashboard caption { text-align: left; padding-bottom: 8px; }
+.dashboard caption { text-align: left; padding-bottom: 8px; font-weight: 650; color: var(--text-h); }
 .dashboard th, .dashboard td { padding: 10px; border-bottom: 1px solid var(--border); text-align: right; }
+.dashboard thead th { position: sticky; top: 0; background: #f3ede2; }
 .dashboard th:first-child { text-align: left; }
 .dashboard tbody th { font-weight: normal; }
 .dashboard tfoot { font-weight: bold; }

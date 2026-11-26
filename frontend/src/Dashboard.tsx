@@ -2,18 +2,7 @@ import { getTotals } from './dashboardStats'
 import type { DailyRecord } from './dashboardStats'
 import './Dashboard.css'
 
-// Temporary sample data for 2–4 November. The API does not store sales or waste yet.
-// Here, all items left at closing are counted as waste.
-const records: DailyRecord[] = [
-  { day: 'Monday', product: 'Croissant', produced: 40, sold: 34, waste: 6 },
-  { day: 'Monday', product: 'Rye bread', produced: 20, sold: 20, waste: 0 },
-  { day: 'Tuesday', product: 'Croissant', produced: 40, sold: 40, waste: 0 },
-  { day: 'Tuesday', product: 'Rye bread', produced: 20, sold: 17, waste: 3 },
-  { day: 'Wednesday', product: 'Croissant', produced: 40, sold: 40, waste: 0 },
-  { day: 'Wednesday', product: 'Rye bread', produced: 20, sold: 18, waste: 2 },
-]
-
-export default function Dashboard() {
+export default function Dashboard({ records }: { records: DailyRecord[] }) {
   // Keep the calculations together so the table and graphs use the same figures.
   const products = [...new Set(records.map(record => record.product))]
   const days = [...new Set(records.map(record => record.day))]
@@ -29,7 +18,6 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <h2>Production overview</h2>
-      <p>Sample data: 2–4 November 2026. These are not real bakery figures.</p>
 
       <div className="dashboard-table">
         <table>
@@ -90,7 +78,7 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-      <p>Waste % = waste ÷ production × 100. Sold out means everything produced that day was sold.</p>
+      <p>The demo counts all unsold units as waste. Sold out means everything produced that day was sold.</p>
       <p>The total sell-out count is across product-days, not calendar days.</p>
     </section>
   )
